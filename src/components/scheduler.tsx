@@ -10,6 +10,7 @@ import {
   CardContent,
   Card,
   Divider,
+  Container,
 } from "@mui/material";
 import { useState, useRef } from "react";
 import { useMediaQuery } from "@mui/material";
@@ -33,16 +34,20 @@ export const Scheduler = () => {
   const textFieldRef = useRef<HTMLInputElement | null>(null);
 
   const handleAddTask = () => {
+    // usually I would use formik with yup for FE validation
+    if(taskInput === '') return;
     setTasks([...tasks, taskInput]);
     setTaskInput("");
   };
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
+        if(taskInput === '') return;
       handleAddTask();
     }
   };
 
   const handleGeneratePlan = async () => {
+    // Usually I would put this logic to a hook. Eg. use-planning
     setIsLoading(true);
     const res = await fetch("/api/plan-day", {
       method: "POST",
@@ -52,7 +57,6 @@ export const Scheduler = () => {
     const data = await res.json();
 
     setSchedule(data.response);
-    //setResponse(data.response);
     setIsLoading(false);
   };
 
@@ -65,22 +69,7 @@ export const Scheduler = () => {
     setSchedule(undefined)
   };
   return (
-    <Box
-      sx={{
-        display: "flex",
-        width: "100%",
-        textAlign: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Box
-        sx={{
-          mt: isMobile ? 0 : 10,
-          textAlign: "left",
-          justifyContent: "center",
-          maxWidth: 600, // Limit the width of the content
-        }}
-      >
+    <Container maxWidth="md" sx={{ mt: isMobile ? 0 : 8 }}>
         <Grid container spacing={4} alignItems="center">
           <Grid size={{ xs: 12, sm: 9 }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
@@ -92,7 +81,7 @@ export const Scheduler = () => {
               variant="outlined"
               value={taskInput}
               onChange={(e) => setTaskInput(e.target.value)}
-              sx={{ width: isMobile ? "100%" : 400 }}
+              sx={{ width: '100%' }}
               fullWidth={isMobile}
               size="small"
               onKeyPress={handleKeyPress}
@@ -168,7 +157,7 @@ export const Scheduler = () => {
             <Box sx={{ marginTop: 4 }}>
               <Typography variant="h5">Your Day Plan:</Typography>
               <Box
-                sx={{ width: "100%", maxWidth: 600, margin: "0 auto", mt: 4 }}
+                sx={{ width: "100%", maxWidth: '%100', margin: "0 auto", mt: 4 }}
               >
                 {schedule.length>0 && schedule?.map((item, index) => (
                   <Card key={index} sx={{ marginBottom: 2 }}>
@@ -191,7 +180,6 @@ export const Scheduler = () => {
             </Box>
           )}
         </Grid>
-      </Box>
-    </Box>
+      </Container>
   );
 };
